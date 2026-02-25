@@ -1,0 +1,26 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: aviation-wrapper-app
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATA_REDIS_HOST: "redis"
+      SPRING_DATA_REDIS_PORT: "6379"
+      LOGGING_LEVEL_ROOT: "INFO"
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7.4-alpine
+    container_name: aviation-wrapper-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+volumes:
+  redis_data:

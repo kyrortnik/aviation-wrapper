@@ -1,0 +1,55 @@
+spring:
+  application:
+    name: aviation-wrapper
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
+      client:
+        config:
+          airports-service:
+            connectTimeout: 2000
+            readTimeout: 3000
+
+resilience4j:
+
+  circuitbreaker:
+    instances:
+      airports-service:
+        slidingWindowSize: 20
+        failureRateThreshold: 40
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 5
+
+  retry:
+    instances:
+      airports-service:
+        maxAttempts: 3
+        waitDuration: 500ms
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+        retryExceptions:
+          - java.io.IOException
+          - feign.RetryableException
+
+  timelimiter:
+    instances:
+      airports-service:
+        timeoutDuration: 5s
+
+  ratelimiter:
+    instances:
+      airports-service:
+        limitForPeriod: 50
+        limitRefreshPeriod: 1m
+        timeoutDuration: 0
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics

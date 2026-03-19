@@ -27,6 +27,9 @@ public class AirportsServiceImpl implements AirportsService {
         } else {
             log.info("Airport details not found in cache for ICAO ID: {}", icaoId);
             List<AirportDetails> airportDetails = airportsClient.getAirportsDetails(icaoId);
+            if (airportDetails == null || airportDetails.isEmpty()) {
+                return List.of();
+            }
             airportDetailsCache.saveDetails(icaoId, airportDetails);
             return airportDetails;
         }

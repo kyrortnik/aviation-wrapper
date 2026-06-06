@@ -47,9 +47,25 @@ resilience4j:
         limitForPeriod: 50
         limitRefreshPeriod: 1m
         timeoutDuration: 0
-
 management:
   endpoints:
     web:
       exposure:
-        include: health,metrics
+        include: "info,health,beans,metrics,loggers,env, refresh,configprops, prometheus"
+# not for production usage
+    env:
+      show-values: ALWAYS
+  tracing:
+    sampling:
+      # Sample every request in dev; lower this (e.g. 0.1) in production
+      probability: 1.0
+  otlp:
+    # Endpoints point at the OpenTelemetry Collector. Overridden via env vars in docker-compose.
+    tracing:
+      endpoint: http://otel-collector:4318/v1/traces
+    logging:
+      endpoint: http://otel-collector:4318/v1/logs
+  metrics:
+    tags:
+      # Group metrics/traces/logs by application in Grafana
+      application: ${spring.application.name}

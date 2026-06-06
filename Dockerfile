@@ -5,7 +5,7 @@ WORKDIR /workspace
 COPY gradlew .
 COPY gradle/ gradle/
 COPY build.gradle settings.gradle ./
-
+COPY ./.git ./.git
 RUN chmod +x ./gradlew && ./gradlew --no-daemon dependencies
 
 # Copy sources
@@ -22,11 +22,11 @@ WORKDIR /app
 RUN useradd -r -u 10001 appuser
 USER appuser
 
-# Copy the built jar
+# Copy the built jar. Telemetry is produced in-app via Micrometer Tracing +
+# the OpenTelemetry OTLP exporter (no java agent needed); see build.gradle and
+# application.yaml. OTLP endpoints are configured through environment variables.
 COPY --from=build /workspace/build/libs/*.jar app.jar
 
 EXPOSE 8080
-
-ENV SERVER_PORT=8080
 
 ENTRYPOINT ["java","-jar","/app/app.jar"]

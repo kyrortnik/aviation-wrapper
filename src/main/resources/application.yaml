@@ -47,9 +47,15 @@ resilience4j:
         limitForPeriod: 50
         limitRefreshPeriod: 1m
         timeoutDuration: 0
-
 management:
   endpoints:
     web:
       exposure:
-        include: health,metrics
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
+#  otlp:
+#    metrics:
+#      export:
+#        url: http://otlp:example:com:4318/v1/metrics

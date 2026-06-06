@@ -5,7 +5,6 @@ WORKDIR /workspace
 COPY gradlew .
 COPY gradle/ gradle/
 COPY build.gradle settings.gradle ./
-
 RUN chmod +x ./gradlew && ./gradlew --no-daemon dependencies
 
 # Copy sources
@@ -24,9 +23,14 @@ USER appuser
 
 # Copy the built jar
 COPY --from=build /workspace/build/libs/*.jar app.jar
+COPY opentelemetry-javaagent.jar ./opentelemetry-javaagent.jar
 
 EXPOSE 8080
 
-ENV SERVER_PORT=8080
+ENV JAVA_TOOL_OPTIONS="-javaagent:./opentelemetry-javaagent.jar" \
+    OTEL_TRACES_EXPORTER=console \
+    OTEL_METRICS_EXPORTER=console \
+    OTEL_LOGS_EXPORTER=console \
+    OTEL_METRIC_EXPORT_INTERVAL=15000
 
 ENTRYPOINT ["java","-jar","/app/app.jar"]

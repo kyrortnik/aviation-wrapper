@@ -3,6 +3,8 @@ package com.mpiatrenka.aviationwrapper.service;
 import com.mpiatrenka.aviationwrapper.cache.AirportDetailsCache;
 import com.mpiatrenka.aviationwrapper.client.AirportsClient;
 import com.mpiatrenka.aviationwrapper.dto.AirportDetails;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -10,6 +12,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 
@@ -33,6 +36,8 @@ class AirportsServiceImplTest {
     private AirportsClient airportsClient;
     @Mock
     private AirportDetailsCache  airportDetailsCache;
+    @Spy
+    private MeterRegistry meterRegistry = new SimpleMeterRegistry();
 
     @Test
     void getAirportDetails_returnsAirportDetails_notPresentInCache() {

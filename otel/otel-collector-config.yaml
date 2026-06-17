@@ -1,0 +1,37 @@
+# OpenTelemetry Collector configuration.
+# The aviation-wrapper app sends OTLP/HTTP (traces + logs) to this collector,
+# which fans the signals out to Tempo (traces) and Loki (logs).
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  batch: {}
+
+exporters:
+  # Traces -> Tempo (OTLP gRPC)
+  otlp/tempo:
+    endpoint: tempo:4317
+    tls:
+      insecure: true
+  # Logs -> Loki native OTLP endpoint
+  otlphttp/loki:
+    endpoint: http://loki:3100/otlp
+  # Handy for debugging what the collector receives
+  debug:
+    verbosity: basic
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp/tempo, debug]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlphttp/loki, debug]

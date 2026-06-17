@@ -10,8 +10,13 @@ services:
       SPRING_DATA_REDIS_HOST: "redis"
       SPRING_DATA_REDIS_PORT: "6379"
       LOGGING_LEVEL_ROOT: "INFO"
+      # Ship traces and logs to the OpenTelemetry Collector via OTLP/HTTP
+      MANAGEMENT_OTLP_TRACING_ENDPOINT: "http://otel-collector:4318/v1/traces"
+      MANAGEMENT_OTLP_LOGGING_ENDPOINT: "http://otel-collector:4318/v1/logs"
+      MANAGEMENT_TRACING_SAMPLING_PROBABILITY: "1.0"
     depends_on:
       - redis
+      - otel-collector
 
   redis:
     image: redis:7.4-alpine
@@ -21,6 +26,41 @@ services:
     volumes:
       - redis_data:/data
     restart: unless-stopped
+
+  # ---- Observability backend ----
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.115.1
+    container_name: aviation-wrapper-otel-collector
+    command: ["--config=/etc/otelcol-contrib/config.yaml"]
+    volumes:
+      - ./otel/otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml
+    ports:
+      - "4317:4317"   # OTLP gRPC
+      - "4318:4318"   # OTLP HTTP
+    depends_on:
+      - tempo
+      - loki
+
+  tempo:
+    image: grafana/tempo:2.6.1
+    container_name: aviation-wrapper-tempo
+    command: ["-config.file=/etc/tempo/tempo.yaml"]
+    volumes:
+      - ./tempo/tempo.yaml:/etc/tempo/tempo.yaml
+      - tempo_data:/var/tempo
+    ports:
+      - "3200:3200"   # Tempo query API (used by Grafana)
+
+  loki:
+    image: grafana/loki:3.3.0
+    container_name: aviation-wrapper-loki
+    command: ["-config.file=/etc/loki/loki-config.yaml"]
+    volumes:
+      - ./loki/loki-config.yaml:/etc/loki/loki-config.yaml
+      - loki_data:/loki
+    ports:
+      - "3100:3100"
 
   prometheus:
     image: prom/prometheus:v2.35.0
@@ -33,13 +73,23 @@ services:
       - app
 
   grafana:
-    image: grafana/grafana:9.5.10
+    image: grafana/grafana:11.4.0
     container_name: aviation-wrapper-grafana
     ports:
       - "3000:3000"
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: "Admin"
+      GF_SECURITY_ADMIN_PASSWORD: "admin"
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
     depends_on:
       - prometheus
-
+      - tempo
+      - loki
 
 volumes:
   redis_data:
+  tempo_data:
+  loki_data:

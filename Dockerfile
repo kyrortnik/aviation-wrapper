@@ -21,16 +21,11 @@ WORKDIR /app
 RUN useradd -r -u 10001 appuser
 USER appuser
 
-# Copy the built jar
+# Copy the built jar. Telemetry is produced in-app via Micrometer Tracing +
+# the OpenTelemetry OTLP exporter (no java agent needed); see build.gradle and
+# application.yaml. OTLP endpoints are configured through environment variables.
 COPY --from=build /workspace/build/libs/*.jar app.jar
-COPY opentelemetry-javaagent.jar ./opentelemetry-javaagent.jar
 
 EXPOSE 8080
-
-ENV JAVA_TOOL_OPTIONS="-javaagent:./opentelemetry-javaagent.jar" \
-    OTEL_TRACES_EXPORTER=console \
-    OTEL_METRICS_EXPORTER=console \
-    OTEL_LOGS_EXPORTER=console \
-    OTEL_METRIC_EXPORT_INTERVAL=15000
 
 ENTRYPOINT ["java","-jar","/app/app.jar"]

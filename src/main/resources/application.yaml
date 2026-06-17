@@ -55,7 +55,17 @@ management:
   endpoint:
     health:
       show-details: ALWAYS
-#  otlp:
-#    metrics:
-#      export:
-#        url: http://otlp:example:com:4318/v1/metrics
+  tracing:
+    sampling:
+      # Sample every request in dev; lower this (e.g. 0.1) in production
+      probability: 1.0
+  otlp:
+    # Endpoints point at the OpenTelemetry Collector. Overridden via env vars in docker-compose.
+    tracing:
+      endpoint: http://localhost:4318/v1/traces
+    logging:
+      endpoint: http://localhost:4318/v1/logs
+  metrics:
+    tags:
+      # Group metrics/traces/logs by application in Grafana
+      application: ${spring.application.name}

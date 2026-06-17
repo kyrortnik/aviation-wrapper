@@ -34,8 +34,18 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
     implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
     implementation 'io.micrometer:micrometer-registry-prometheus'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // Observability: distributed tracing + OTLP export of traces and logs
+    implementation 'io.micrometer:micrometer-tracing-bridge-otel'
+    implementation 'io.opentelemetry:opentelemetry-exporter-otlp'
+    // Version pinned to match the OpenTelemetry API (1.49.0) managed by Spring Boot;
+    // this artifact is not covered by the Spring Boot BOM.
+    implementation 'io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0:2.15.0'
+    // Produce client spans for outbound Feign (aviationweather) calls
+    implementation 'io.github.openfeign:feign-micrometer'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

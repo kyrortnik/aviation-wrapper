@@ -43,7 +43,7 @@ dependencies {
     implementation 'io.opentelemetry:opentelemetry-exporter-otlp'
     // Version pinned to match the OpenTelemetry API (1.49.0) managed by Spring Boot;
     // this artifact is not covered by the Spring Boot BOM.
-    implementation 'io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0:2.15.0'
+    implementation 'io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0:2.15.0-alpha'
     // Produce client spans for outbound Feign (aviationweather) calls
     implementation 'io.github.openfeign:feign-micrometer'
     compileOnly 'org.projectlombok:lombok'
@@ -52,7 +52,7 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     testImplementation platform('org.testcontainers:testcontainers-bom:1.21.0')
-    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.testcontainers:testcontainers-junit-jupiter:2.0.5'
     testImplementation 'com.redis.testcontainers:testcontainers-redis:1.6.4'
 }
 

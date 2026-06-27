@@ -51,10 +51,10 @@ management:
   endpoints:
     web:
       exposure:
-        include: "*"
-  endpoint:
-    health:
-      show-details: ALWAYS
+        include: "info,health,beans,metrics,loggers,env, refresh,configprops, prometheus"
+# not for production usage
+    env:
+      show-values: ALWAYS
   tracing:
     sampling:
       # Sample every request in dev; lower this (e.g. 0.1) in production

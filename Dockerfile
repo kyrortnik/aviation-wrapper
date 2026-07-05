@@ -5,6 +5,7 @@ WORKDIR /workspace
 COPY gradlew .
 COPY gradle/ gradle/
 COPY build.gradle settings.gradle ./
+COPY ./.git ./.git
 RUN chmod +x ./gradlew && ./gradlew --no-daemon dependencies
 
 # Copy sources

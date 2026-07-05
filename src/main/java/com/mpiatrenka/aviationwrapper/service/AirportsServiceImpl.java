@@ -27,6 +27,7 @@ public class AirportsServiceImpl implements AirportsService {
     @Observed(name = "airport.details.lookup", contextualName = "get-airport-details")
     @Override
     public List<AirportDetails> getAirportDetails(@NonNull String icaoId) {
+        log.info("Getting airport details for ICAO ID: {}", icaoId);
         Optional<List<AirportDetails>> airportDetailsOpt = airportDetailsCache.getAirportDetails(icaoId);
         if (airportDetailsOpt.isPresent()) {
             meterRegistry.counter(CACHE_LOOKUPS_METRIC, "result", "hit").increment();

@@ -1,6 +1,13 @@
 # OpenTelemetry Collector configuration.
 # The aviation-wrapper app sends OTLP/HTTP (traces + logs) to this collector,
 # which fans the signals out to Tempo (traces) and Loki (logs).
+extensions:
+  # Enable the zPages extension with default settings
+  zpages:
+    # The endpoint where zPages will be served
+    # Default is http://localhost:55679/debug/tracez
+    endpoint: otel-collector:55679
+
 receivers:
   otlp:
     protocols:
@@ -26,6 +33,7 @@ exporters:
     verbosity: basic
 
 service:
+  extensions: [zpages]
   pipelines:
     traces:
       receivers: [otlp]

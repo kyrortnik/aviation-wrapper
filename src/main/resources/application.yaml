@@ -62,9 +62,9 @@ management:
   otlp:
     # Endpoints point at the OpenTelemetry Collector. Overridden via env vars in docker-compose.
     tracing:
-      endpoint: http://localhost:4318/v1/traces
+      endpoint: http://otel-collector:4318/v1/traces
     logging:
-      endpoint: http://localhost:4318/v1/logs
+      endpoint: http://otel-collector:4318/v1/logs
   metrics:
     tags:
       # Group metrics/traces/logs by application in Grafana

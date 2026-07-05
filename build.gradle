@@ -2,7 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.5.11'
     id 'io.spring.dependency-management' version '1.1.7'
-    id "com.gorylenko.gradle-git-properties" version "1.4.6"
+    id "com.gorylenko.gradle-git-properties" version "4.0.1"
 }
 
 group = 'com.mpiatrenka'
@@ -30,22 +30,25 @@ ext {
 }
 
 dependencies {
+//  web
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.15'
+//  resilience
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
     implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j'
+//  caching
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
-//    observability
+//  observability
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-aop'
     implementation 'io.micrometer:micrometer-registry-prometheus'
-
     // Observability: distributed tracing + OTLP export of traces and logs
     implementation 'io.micrometer:micrometer-tracing-bridge-otel'
     implementation 'io.opentelemetry:opentelemetry-exporter-otlp'
     // Version pinned to match the OpenTelemetry API (1.49.0) managed by Spring Boot;
     // this artifact is not covered by the Spring Boot BOM.
+//    todo why I need this dependency?
     implementation 'io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0:2.15.0-alpha'
     // Produce client spans for outbound Feign (aviationweather) calls
     implementation 'io.github.openfeign:feign-micrometer'
@@ -67,4 +70,9 @@ dependencyManagement {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+
+gitProperties {
+    dotGitDirectory = layout.projectDirectory.dir("./.git")
 }

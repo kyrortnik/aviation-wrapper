@@ -90,6 +90,16 @@ services:
       - tempo
       - loki
 
+  postgres:
+    image: postgres:14.4
+    container_name: spring-batch-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+
 volumes:
   redis_data:
   tempo_data:

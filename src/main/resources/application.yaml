@@ -15,6 +15,9 @@ spring:
             connectTimeout: 2000
             readTimeout: 3000
 
+  liquibase:
+    change-log: classpath:db/changelog/changelog-master.xml
+
 resilience4j:
 
   circuitbreaker:
@@ -69,3 +72,4 @@ management:
     tags:
       # Group metrics/traces/logs by application in Grafana
       application: ${spring.application.name}
+

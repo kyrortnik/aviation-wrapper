@@ -6,6 +6,7 @@ import org.springframework.batch.core.BatchStatus;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +24,9 @@ public class WeatherJob implements Job {
 
     @Override
     public void execute(JobExecution execution) {
-        log.info("Weather job started");
+        JobParameters jobParameters = execution.getJobParameters();
+        String inputFile = jobParameters.getString("input.file");
+        log.info("Weather job started, processing file: {}",inputFile);
         log.info("Weather job finished");
         execution.setStatus(BatchStatus.COMPLETED);
         jobRepository.update(execution);

@@ -1,4 +1,4 @@
-package com.mpiatrenka.aviationwrapper.batch.job;
+package com.mpiatrenka.aviationwrapper.batch;
 
 
 import org.junit.jupiter.api.BeforeAll;
